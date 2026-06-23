@@ -16,4 +16,9 @@ public class HealthController {
                 "timestamp", Instant.now().toString()
         );
     }
+
+    @GetMapping("/login/success")
+    public Map<String, Object> loginSuccess() {
+        return Map.of("message", "Login successful");
+    }
 }

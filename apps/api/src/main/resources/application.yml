@@ -16,5 +16,21 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+
 server:
   port: ${PORT:8080}
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:hecos-dev-secret-key-change-in-production-min-32-chars}
+    expiration-ms: 86400000
