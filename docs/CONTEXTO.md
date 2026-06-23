@@ -67,9 +67,9 @@ La app tiene sync manual (boton) y automatico (configurable en frecuencia/horari
 
 Sprint 1 (ya paso): Analisis y definicion. Se penso la idea y se definieron las clases.
 
-Sprint 2 (lunes 22 de junio): Desarrollo de entidades padre e hijas en Spring Boot, diagrama UML.
+Sprint 2 (lunes 22 de junio): Desarrollo de entidades, diagrama UML, autenticacion con Google (OAuth2 + JWT).
 
-Sprint 3 (miercoles 25 de junio): Autenticacion con Google, capa de repositorios y servicios.
+Sprint 3 (miercoles 25 de junio): Capa de repositorios y servicios, HealthDataManager.
 
 Sprint 4: API REST, app Android con lectura de Health Connect.
 
