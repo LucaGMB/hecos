@@ -33,3 +33,7 @@ apps/web/.next/
 # OS
 .DS_Store
 Thumbs.db
+
+# Temp / misc
+*.pptx
+*~
