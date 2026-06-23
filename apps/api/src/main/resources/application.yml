@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: hecos-api
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:hecos}
+    username: ${DB_USER:hecos}
+    password: ${DB_PASSWORD:hecos}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+server:
+  port: ${PORT:8080}
