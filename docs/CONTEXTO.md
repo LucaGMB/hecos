@@ -50,6 +50,51 @@ La entidad User tiene los datos de Google Auth (googleId, email, name, avatar).
 
 La app tiene sync manual (boton) y automatico (configurable en frecuencia/horarios). Si el servidor no esta disponible, los datos se guardan en una cola local y se reintentan.
 
+## Estado actual del codigo
+
+### Implementado (Sprint 1 + 2 completados)
+
+**Entidades JPA** (`entity/`):
+- `BaseHealthRecord` - clase padre abstracta con id, userId, timestamp, source
+- ~50 entidades hijas: `StepsSample`, `HeartRateSample`, `SleepStage`, `CaloriesBurned`, `DistanceSample`, `WeightSample`, `BloodPressureSample`, `OxygenSaturationSample`, `BodyTemperatureSample`, `CyclingPedalingCadenceSample`, `ExerciseSession`, `NutritionSample`, `BloodGlucoseSample`, `HydrationSample`, `LeanBodyMassSample`, `HeightSample`, `PlannedExerciseBlock`, `ExerciseLap`, `PowerSample`, `SpeedSample`, `Vo2MaxSample`, `WheelDistanceSample`, `HandwashingSample`, `MenstruationPeriodSample`, `CervicalMucusSample`, `OvulationTestSample`, `SexualActivitySample`, `RestingHeartRateSample`, `WalkingHeartRateAverage`, `RespiratoryRateSample`, `MindfulSession`, `SleepSession` y mas
+- `User` - con googleId, email, name, avatarUrl, timestamps
+- `Criticidad` - enum con BAJA, MODERADA, ALTA, CRITICA, BLOQUEANTE (cada uno con color hex)
+
+**Servicios** (`service/`):
+- `HealthDataManager` - clase administradora con `List<BaseHealthRecord>` y metodos: `agregarRegistro`, `listarTodos`, `listarPorTipo<T>` (generics), `mostrarTodos`
+- `JwtService` - genera y valida tokens JWT (HMAC-SHA256)
+
+**Repositorios** (`repository/`):
+- `UserRepository` - JpaRepository con `findByGoogleId` y `findByEmail`
+
+**Seguridad** (`config/`):
+- `SecurityConfig` - Spring Security con CORS abierto, sesiones stateless, Google OAuth2 login (web flow)
+- Endpoints publicos: `/auth/**`, `/health`, `/login/**`
+
+**Controllers** (`controller/`):
+- `HealthController` - `GET /health` devuelve `{"status":"UP","timestamp":"..."}`
+- `AuthController` - `POST /auth/google` (Android: recibe idToken, lo verifica contra Google, devuelve JWT)
+
+**Diagrama UML** (`docs/uml/vista-de-clases.drawio`):
+- Todas las entidades con herencia
+- HealthDataManager incluido
+- Layout reorganizado sin superposiciones
+
+### Variables de entorno requeridas (Dokploy)
+- `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`
+- `PORT` (default 8080)
+- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
+- `JWT_SECRET`
+
+### PRs mergeados a main
+- PR #14: `feature/sprint-2-entities` - entidades, manager, health endpoint, diagrama
+- PR #15: `feature/sprint-2-google-auth` - OAuth2, JWT, SecurityConfig, UserRepository
+
+### Build
+- Multi-stage Dockerfile en `apps/api/Dockerfile` que usa mvnw
+- Deploy en Dokploy con Hibernate `ddl-auto: update`
+- Probado: endpoint `/health` responde correctamente
+
 ## Distribucion del trabajo
 
 - Luca: parte de datos, backend, app mobile, prototipo del frontend (con Claude Code)
