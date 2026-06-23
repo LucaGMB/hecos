@@ -6,7 +6,7 @@ HECOS (HEalth COnnect Server) es una plataforma para extraer todos los datos de 
 
 ## Para que materia es
 
-Trabajo Practico de Desarrollo de Sistemas, Escuela Tecnica Nº3. Dura 2 semanas (4 sprints, uno por clase). Las clases son lunes y miercoles. El profesor dio libertad para salirse de la consigna original (que pedia Java SE puro con consola), asi que estamos haciendo un proyecto real con arquitectura profesional.
+Trabajo Practico de Desarrollo de Sistemas, Escuela Tecnica Nº3. Dura 3 semanas (6 sprints, uno por clase). Las clases son lunes y miercoles. El profesor dio libertad para salirse de la consigna original (que pedia Java SE puro con consola), asi que estamos haciendo un proyecto real con arquitectura profesional.
 
 La consigna pide que se siga POO con herencia, polimorfismo, clases padre/hija, clase administradora con colecciones. Eso se cumple en el backend con las entidades JPA.
 
@@ -67,11 +67,15 @@ La app tiene sync manual (boton) y automatico (configurable en frecuencia/horari
 
 Sprint 1 (ya paso): Analisis y definicion. Se penso la idea y se definieron las clases.
 
-Sprint 2 (lunes 22 de junio): Desarrollo de entidades padre e hijas en Spring Boot, diagrama UML, autenticacion con Google.
+Sprint 2 (lunes 22 de junio): Desarrollo de entidades padre e hijas en Spring Boot, diagrama UML.
 
-Sprint 3: Capa de servicios y repositorios, API REST, app Android con lectura de Health Connect.
+Sprint 3 (miercoles 25 de junio): Autenticacion con Google, capa de repositorios y servicios.
 
-Sprint 4: Sync de la app, prototipo del frontend, deploy en Dokploy, bitacora.
+Sprint 4: API REST, app Android con lectura de Health Connect.
+
+Sprint 5: Frontend React.
+
+Sprint 6: Deploy en Dokploy, sync de la app, testing, bitacora.
 
 ## Entregables para la materia
 
