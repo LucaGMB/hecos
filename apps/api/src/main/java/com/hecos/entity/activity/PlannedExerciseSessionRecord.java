@@ -2,6 +2,7 @@ package com.hecos.entity.activity;
 
 import com.hecos.entity.base.IntervalHealthRecord;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class PlannedExerciseSessionRecord extends IntervalHealthRecord {
 
     private String notes;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "record", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlannedExerciseBlock> blocks;
 }

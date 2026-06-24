@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
 
-@MappedSuperclass
+@Entity
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public abstract class IntervalHealthRecord extends BaseHealthRecord {

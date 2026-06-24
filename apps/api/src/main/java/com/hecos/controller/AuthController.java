@@ -1,13 +1,12 @@
 package com.hecos.controller;
 
-import com.hecos.repository.UserRepository;
 import com.hecos.service.JwtService;
+import com.hecos.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Instant;
 import java.util.Map;
 
 @RestController
@@ -15,7 +14,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final JwtService jwtService;
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -40,16 +39,7 @@ public class AuthController {
             var name = (String) payload.get("name");
             var avatarUrl = (String) payload.get("picture");
 
-            var user = userRepository.findByGoogleId(googleId)
-                .orElseGet(() -> userRepository.save(
-                    com.hecos.entity.User.builder()
-                        .googleId(googleId)
-                        .email(email)
-                        .name(name)
-                        .avatarUrl(avatarUrl)
-                        .createdAt(Instant.now())
-                        .build()
-                ));
+            var user = userService.findOrCreateByGoogle(googleId, email, name, avatarUrl);
 
             var jwt = jwtService.generateToken(user.getId(), user.getEmail());
             return ResponseEntity.ok(Map.of(

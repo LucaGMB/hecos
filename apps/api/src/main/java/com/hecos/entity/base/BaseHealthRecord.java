@@ -5,7 +5,8 @@ import lombok.*;
 import java.time.Instant;
 import java.util.UUID;
 
-@MappedSuperclass
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public abstract class BaseHealthRecord {

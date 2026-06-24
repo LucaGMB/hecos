@@ -1,29 +1,27 @@
 package com.hecos.config;
 
-import com.hecos.entity.User;
-import com.hecos.repository.UserRepository;
+import com.hecos.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.time.Instant;
 import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserRepository userRepository;
-
-    public SecurityConfig(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final UserService userService;
+    private final JwtAuthenticationFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -32,31 +30,10 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/health", "/login/**").permitAll()
+                .requestMatchers("/auth/**", "/health").permitAll()
                 .anyRequest().authenticated()
             )
-            .oauth2Login(oauth2 -> oauth2
-                .successHandler((request, response, authentication) -> {
-                    var oauthUser = (org.springframework.security.oauth2.core.user.OAuth2User) authentication.getPrincipal();
-                    var attributes = oauthUser.getAttributes();
-                    var googleId = attributes.get("sub").toString();
-                    var email = attributes.get("email").toString();
-                    var name = (String) attributes.get("name");
-                    var avatarUrl = (String) attributes.get("picture");
-
-                    userRepository.findByGoogleId(googleId).orElseGet(() ->
-                        userRepository.save(User.builder()
-                            .googleId(googleId)
-                            .email(email)
-                            .name(name)
-                            .avatarUrl(avatarUrl)
-                            .createdAt(Instant.now())
-                            .build())
-                    );
-
-                    response.sendRedirect("/login/success");
-                })
-            );
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

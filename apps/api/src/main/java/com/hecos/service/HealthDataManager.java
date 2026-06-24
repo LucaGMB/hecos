@@ -1,57 +1,84 @@
 package com.hecos.service;
 
 import com.hecos.entity.base.BaseHealthRecord;
-import jakarta.annotation.PostConstruct;
+import com.hecos.repository.HealthRecordRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class HealthDataManager {
 
-    private final List<BaseHealthRecord> records = new ArrayList<>();
+    private final HealthRecordRepository repository;
 
-    public void agregarRegistro(BaseHealthRecord record) {
-        records.add(record);
+    @Transactional
+    public BaseHealthRecord agregarRegistro(BaseHealthRecord record) {
+        if (record.getHealthConnectId() != null && repository.existsByHealthConnectId(record.getHealthConnectId())) {
+            return null;
+        }
+        return repository.save(record);
     }
 
-    public boolean eliminarRegistro(BaseHealthRecord record) {
-        return records.remove(record);
+    @Transactional
+    public List<BaseHealthRecord> agregarRegistros(List<BaseHealthRecord> records) {
+        List<String> hcIds = records.stream()
+                .map(BaseHealthRecord::getHealthConnectId)
+                .filter(id -> id != null)
+                .toList();
+
+        List<String> existingIds = hcIds.isEmpty() ? List.of() :
+                repository.findByUserIdAndHealthConnectIdIn(records.getFirst().getUserId(), hcIds)
+                        .stream()
+                        .map(BaseHealthRecord::getHealthConnectId)
+                        .toList();
+
+        List<BaseHealthRecord> toSave = records.stream()
+                .filter(r -> r.getHealthConnectId() == null || !existingIds.contains(r.getHealthConnectId()))
+                .toList();
+
+        return repository.saveAll(toSave);
     }
 
     public List<BaseHealthRecord> listarTodos() {
-        return new ArrayList<>(records);
+        return repository.findAll();
+    }
+
+    public List<BaseHealthRecord> listarPorUsuario(UUID userId) {
+        return repository.findByUserId(userId);
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends BaseHealthRecord> List<T> listarPorTipo(Class<T> tipo) {
-        return records.stream()
-                .filter(tipo::isInstance)
-                .map(r -> (T) r)
-                .toList();
+    public <T extends BaseHealthRecord> List<T> listarPorTipo(Class<T> tipo, UUID userId) {
+        return (List<T>) repository.findByTypeAndUserId(tipo, userId);
     }
 
-    public void mostrarTodos() {
-        if (records.isEmpty()) {
-            System.out.println("No hay registros almacenados.");
-            return;
+    public List<BaseHealthRecord> listarPorRangoDeFechas(UUID userId, Instant desde, Instant hasta) {
+        return repository.findByUserIdAndDateRange(userId, desde, hasta);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends BaseHealthRecord> List<T> listarPorTipoYRango(Class<T> tipo, UUID userId, Instant desde, Instant hasta) {
+        return (List<T>) repository.findByTypeAndUserIdAndDateRange(tipo, userId, desde, hasta);
+    }
+
+    public long cantidadTotal(UUID userId) {
+        return repository.countByUserId(userId);
+    }
+
+    public long cantidadPorTipo(Class<? extends BaseHealthRecord> tipo, UUID userId) {
+        return repository.countByTypeAndUserId(tipo, userId);
+    }
+
+    public boolean eliminarRegistro(UUID id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+            return true;
         }
-        for (BaseHealthRecord record : records) {
-            System.out.println(record);
-        }
-    }
-
-    public int cantidadTotal() {
-        return records.size();
-    }
-
-    public void limpiar() {
-        records.clear();
-    }
-
-    @PostConstruct
-    public void init() {
-        System.out.println("HealthDataManager inicializado. Listo para gestionar registros de salud.");
+        return false;
     }
 }
