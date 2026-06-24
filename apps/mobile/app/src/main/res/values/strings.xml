@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HECOS</string>
+    <string name="sign_in_with_google">Iniciar sesión con Google</string>
+    <string name="sync_data">Sincronizar datos</string>
+    <string name="syncing">Sincronizando…</string>
+    <string name="sync_complete">Sincronización completada</string>
+    <string name="sign_out">Cerrar sesión</string>
+    <string name="health_connect_not_available">Health Connect no está disponible</string>
+    <string name="permissions_required">Se necesitan permisos de Health Connect</string>
+    <string name="grant_permissions">Otorgar permisos</string>
+    <string name="google_web_client_id">YOUR_GOOGLE_WEB_CLIENT_ID</string>
+</resources>
