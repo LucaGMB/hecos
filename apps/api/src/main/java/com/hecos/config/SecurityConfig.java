@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -20,9 +21,11 @@ import java.util.List;
 public class SecurityConfig {
 
     private final UserRepository userRepository;
+    private final JwtAuthFilter jwtAuthFilter;
 
-    public SecurityConfig(UserRepository userRepository) {
+    public SecurityConfig(UserRepository userRepository, JwtAuthFilter jwtAuthFilter) {
         this.userRepository = userRepository;
+        this.jwtAuthFilter = jwtAuthFilter;
     }
 
     @Bean
@@ -31,6 +34,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfig()))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**", "/health", "/login/**").permitAll()
                 .anyRequest().authenticated()
