@@ -9,5 +9,5 @@
     <string name="health_connect_not_available">Health Connect no está disponible</string>
     <string name="permissions_required">Se necesitan permisos de Health Connect</string>
     <string name="grant_permissions">Otorgar permisos</string>
-    <string name="google_web_client_id">YOUR_GOOGLE_WEB_CLIENT_ID</string>
+    <string name="google_web_client_id">428073873838-23k9egkgpsekn0blbs78jom8n0e1odk8.apps.googleusercontent.com</string>
 </resources>

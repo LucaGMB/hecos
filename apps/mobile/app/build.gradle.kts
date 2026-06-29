@@ -14,7 +14,7 @@ android {
         versionCode = 1
         versionName = "0.1.0"
 
-        buildConfigField("String", "API_BASE_URL", "\"https://hecos-api.lucagmb.com\"")
+        buildConfigField("String", "API_BASE_URL", "\"https://hecos-api.aguilucho.ar\"")
     }
 
     buildTypes {
