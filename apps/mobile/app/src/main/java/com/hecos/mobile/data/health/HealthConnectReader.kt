@@ -40,7 +40,7 @@ class HealthConnectReader(context: Context) {
         for ((slug, recordType) in SLUG_TO_RECORD_TYPE) {
             try {
                 val records = readRecords(recordType, timeRange)
-                if (records.isNotEmpty()) {
+                if (records.size() > 0) {
                     results[slug] = records
                 }
             } catch (_: Exception) {
@@ -323,17 +323,7 @@ class HealthConnectReader(context: Context) {
                 json.addProperty("temperatureCelsius", record.temperature.inCelsius)
                 json.addProperty("measurementLocation", record.measurementLocation)
             }
-            else -> {
-                if (record is IntervalRecord) {
-                    json.addProperty("startTime", record.startTime.toString())
-                    json.addProperty("startZoneOffset", record.startZoneOffset?.toString())
-                    json.addProperty("endTime", record.endTime.toString())
-                    json.addProperty("endZoneOffset", record.endZoneOffset?.toString())
-                } else if (record is InstantaneousRecord) {
-                    json.addProperty("time", record.time.toString())
-                    json.addProperty("zoneOffset", record.zoneOffset?.toString())
-                }
-            }
+            else -> {}
         }
 
         return json
