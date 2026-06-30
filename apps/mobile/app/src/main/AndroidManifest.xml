@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <uses-permission android:name="android.permission.health.READ_STEPS" />
     <uses-permission android:name="android.permission.health.READ_HEART_RATE" />
     <uses-permission android:name="android.permission.health.READ_SLEEP" />
@@ -66,21 +67,26 @@
             android:exported="false"
             android:theme="@style/Theme.Hecos" />
 
-        <activity-alias
-            android:name="ViewPermissionUsageActivity"
+        <activity
+            android:name=".ui.rationale.RationaleActivity"
             android:exported="true"
-            android:targetActivity=".ui.home.HomeActivity"
-            android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
+            android:theme="@style/Theme.Hecos">
+            <!-- Required for Health Connect permission dialog on Android 13 and below -->
+            <intent-filter>
+                <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+            </intent-filter>
+            <!-- Required for Health Connect permission dialog on Android 14+ -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW_PERMISSION_USAGE" />
                 <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
             </intent-filter>
-        </activity-alias>
+        </activity>
 
     </application>
 
     <queries>
         <package android:name="com.google.android.apps.healthdata" />
+        <package android:name="com.sec.android.app.shealth" />
     </queries>
 
 </manifest>
