@@ -1,11 +1,15 @@
 package com.hecos.mobile.ui.home
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.health.connect.client.PermissionController
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -29,6 +33,12 @@ class HomeActivity : AppCompatActivity() {
         PermissionController.createRequestPermissionResultContract()
     ) {
         lifecycleScope.launch { checkPermissions() }
+    }
+
+    private val activityRecognitionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {
+        permissionLauncher.launch(HealthConnectReader.PERMISSIONS)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +75,14 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun requestPermissions() {
-        permissionLauncher.launch(HealthConnectReader.PERMISSIONS)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION)
+                != PackageManager.PERMISSION_GRANTED
+        ) {
+            activityRecognitionLauncher.launch(Manifest.permission.ACTIVITY_RECOGNITION)
+        } else {
+            permissionLauncher.launch(HealthConnectReader.PERMISSIONS)
+        }
     }
 
     private fun startSync() {
