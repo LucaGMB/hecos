@@ -2,9 +2,9 @@ services:
   db:
     image: postgres:17-alpine
     environment:
-      POSTGRES_DB: hecos
-      POSTGRES_USER: hecos
-      POSTGRES_PASSWORD: hecos
+      POSTGRES_DB: ${DB_NAME:-hecos}
+      POSTGRES_USER: ${DB_USER:-hecos}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-hecos}
     ports:
       - "5432:5432"
     volumes:
@@ -17,11 +17,26 @@ services:
     environment:
       DB_HOST: db
       DB_PORT: 5432
-      DB_NAME: hecos
-      DB_USER: hecos
-      DB_PASSWORD: hecos
+      DB_NAME: ${DB_NAME:-hecos}
+      DB_USER: ${DB_USER:-hecos}
+      DB_PASSWORD: ${DB_PASSWORD:-hecos}
+      PORT: ${PORT:-8080}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
     depends_on:
       - db
+
+  web:
+    build:
+      context: ./apps/web
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
+        VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID}
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
 
 volumes:
   postgres_data:
