@@ -23,9 +23,36 @@ export async function getSummary(): Promise<SummaryResponse> {
 }
 
 export async function authGoogle(idToken: string) {
-  const { data } = await api.post<{ token: string; email: string; name: string }>(
+  const { data } = await api.post<{ token: string; email: string; name: string; avatarUrl?: string }>(
     '/auth/google',
     { idToken }
   )
+  return data
+}
+
+export interface HealthRecord {
+  id: string
+  type: string
+  sourceApp: string
+  receivedAt: string
+  data: string
+}
+
+export interface RecordsResponse {
+  content: HealthRecord[]
+  totalElements: number
+  totalPages: number
+}
+
+export interface GetRecordsParams {
+  type?: string
+  from?: string
+  to?: string
+  page?: number
+  size?: number
+}
+
+export async function getRecords(params: GetRecordsParams = {}): Promise<RecordsResponse> {
+  const { data } = await api.get<RecordsResponse>('/api/health/records', { params })
   return data
 }

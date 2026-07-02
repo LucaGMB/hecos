@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.hecos.entity.RawSyncRecord;
 import com.hecos.repository.RawSyncRecordRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -52,5 +55,10 @@ public class SyncService {
 
     public long getTotalCount(UUID userId) {
         return repo.countByUserId(userId);
+    }
+
+    public Page<RawSyncRecord> getRecords(UUID userId, String type, Instant from, Instant to, int page, int size) {
+        var pageable = PageRequest.of(page, size);
+        return repo.findByFilters(userId, type, from, to, pageable);
     }
 }

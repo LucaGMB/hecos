@@ -10,7 +10,7 @@ export default function Login() {
     if (!credentialResponse.credential) return
     try {
       const session = await authGoogle(credentialResponse.credential)
-      saveSession(session.token, session.email, session.name)
+      saveSession(session.token, session.email, session.name, session.avatarUrl)
       navigate('/dashboard')
     } catch {
       alert('Error al autenticar. Intentá de nuevo.')

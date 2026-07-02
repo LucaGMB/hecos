@@ -3,39 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { getSummary } from '../api'
 import type { SummaryResponse } from '../api'
-import { clearSession, getSession } from '../auth'
+import { getSession } from '../auth'
+import { TYPE_LABELS, COLORS, getDefaultRangePref, DEFAULT_RANGE_OPTIONS } from '../constants'
+import NavBar from '../components/NavBar'
 import styles from './Dashboard.module.css'
-
-const TYPE_LABELS: Record<string, string> = {
-  steps: 'Pasos',
-  distance: 'Distancia',
-  'heart-rate': 'Freq. cardíaca',
-  'resting-heart-rate': 'FC en reposo',
-  'heart-rate-variability': 'HRV',
-  'blood-pressure': 'Presión arterial',
-  'blood-glucose': 'Glucemia',
-  'oxygen-saturation': 'SpO₂',
-  'respiratory-rate': 'Freq. respiratoria',
-  'body-temperature': 'Temperatura',
-  weight: 'Peso',
-  height: 'Altura',
-  'body-fat': 'Grasa corporal',
-  'lean-body-mass': 'Masa magra',
-  'bone-mass': 'Masa ósea',
-  'body-water-mass': 'Agua corporal',
-  'basal-metabolic-rate': 'TMB',
-  'total-calories-burned': 'Calorías totales',
-  'active-calories-burned': 'Calorías activas',
-  'exercise-session': 'Ejercicio',
-  'floors-climbed': 'Pisos',
-  'elevation-gained': 'Elevación',
-  vo2max: 'VO₂ máx',
-  'sleep-session': 'Sueño',
-  nutrition: 'Nutrición',
-  hydration: 'Hidratación',
-}
-
-const COLORS = ['#1a73e8','#34a853','#fbbc04','#ea4335','#9c27b0','#00bcd4','#ff9800','#607d8b']
 
 export default function Dashboard() {
   const navigate = useNavigate()
@@ -43,6 +14,8 @@ export default function Dashboard() {
   const [summary, setSummary] = useState<SummaryResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const defaultRange = getDefaultRangePref()
+  const defaultRangeLabel = DEFAULT_RANGE_OPTIONS.find((o) => o.value === defaultRange)?.label ?? 'Todo'
 
   useEffect(() => {
     if (!session) { navigate('/'); return }
@@ -51,11 +24,6 @@ export default function Dashboard() {
       .catch(() => setError('No se pudo cargar el resumen. ¿Está el backend online?'))
       .finally(() => setLoading(false))
   }, [])
-
-  function signOut() {
-    clearSession()
-    navigate('/')
-  }
 
   const chartData = summary
     ? Object.entries(summary.byType)
@@ -66,16 +34,11 @@ export default function Dashboard() {
 
   return (
     <div className={styles.layout}>
-      <header className={styles.header}>
-        <span className={styles.headerLogo}>HECOS</span>
-        <div className={styles.headerRight}>
-          <span className={styles.email}>{session?.email}</span>
-          <button className={styles.signOut} onClick={signOut}>Cerrar sesión</button>
-        </div>
-      </header>
+      <NavBar />
 
       <main className={styles.main}>
         <h2 className={styles.title}>Panel de salud</h2>
+        <p className={styles.status}>Rango por defecto (Registros): {defaultRangeLabel}</p>
 
         {loading && <p className={styles.status}>Cargando datos…</p>}
         {error && <p className={styles.error}>{error}</p>}

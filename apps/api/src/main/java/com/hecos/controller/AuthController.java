@@ -56,7 +56,8 @@ public class AuthController {
                 "token", jwt,
                 "userId", user.getId().toString(),
                 "email", user.getEmail(),
-                "name", user.getName()
+                "name", user.getName(),
+                "avatarUrl", user.getAvatarUrl() == null ? "" : user.getAvatarUrl()
             ));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Token verification failed"));
