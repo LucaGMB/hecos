@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 
@@ -42,6 +43,31 @@ public class SyncController {
         return ResponseEntity.ok(Map.of(
             "total", syncService.getTotalCount(userId),
             "byType", syncService.getSummaryByType(userId)
+        ));
+    }
+
+    @GetMapping("/records")
+    public ResponseEntity<?> records(
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) Instant from,
+            @RequestParam(required = false) Instant to,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            Authentication auth) {
+
+        var userId = UUID.fromString(auth.getName());
+        var result = syncService.getRecords(userId, type, from, to, page, size);
+
+        return ResponseEntity.ok(Map.of(
+            "content", result.getContent().stream().map(r -> Map.of(
+                "id", r.getId(),
+                "type", r.getType(),
+                "sourceApp", r.getSourceApp() == null ? "" : r.getSourceApp(),
+                "receivedAt", r.getReceivedAt(),
+                "data", r.getData()
+            )).toList(),
+            "totalElements", result.getTotalElements(),
+            "totalPages", result.getTotalPages()
         ));
     }
 }
