@@ -4,32 +4,6 @@
   flex-direction: column;
 }
 
-.header {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 0 32px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.headerLogo { font-size: 20px; font-weight: 700; color: var(--primary); }
-.headerRight { display: flex; align-items: center; gap: 16px; }
-.email { font-size: 14px; color: var(--muted); }
-
-.signOut {
-  background: transparent;
-  color: var(--muted);
-  border: 1px solid var(--border);
-  padding: 6px 14px;
-  font-size: 13px;
-}
-.signOut:hover { background: var(--bg); }
-
 .main {
   flex: 1;
   max-width: 960px;
