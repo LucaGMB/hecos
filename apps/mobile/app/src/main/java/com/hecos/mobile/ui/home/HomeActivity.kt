@@ -20,6 +20,7 @@ import com.hecos.mobile.data.repository.SyncService
 import com.hecos.mobile.data.repository.TokenStore
 import com.hecos.mobile.databinding.ActivityHomeBinding
 import com.hecos.mobile.ui.auth.AuthActivity
+import com.hecos.mobile.ui.settings.SyncSettingsDialog
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -65,9 +66,14 @@ class HomeActivity : AppCompatActivity() {
         binding.btnSignOut.setOnClickListener { signOut() }
         binding.btnGrantPermissions.setOnClickListener { requestPermissions() }
         binding.btnSync.setOnClickListener { startSync() }
+        binding.btnSyncSettings.setOnClickListener { showSyncSettings() }
 
         lifecycleScope.launch { checkPermissions() }
         observeSyncProgress()
+    }
+
+    private fun showSyncSettings() {
+        SyncSettingsDialog.show(this, lifecycleScope, tokenStore)
     }
 
     private suspend fun checkPermissions() {
