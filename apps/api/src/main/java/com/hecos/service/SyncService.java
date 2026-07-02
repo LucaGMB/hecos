@@ -6,6 +6,8 @@ import com.hecos.repository.RawSyncRecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -58,7 +60,19 @@ public class SyncService {
     }
 
     public Page<RawSyncRecord> getRecords(UUID userId, String type, Instant from, Instant to, int page, int size) {
-        var pageable = PageRequest.of(page, size);
-        return repo.findByFilters(userId, type, from, to, pageable);
+        Specification<RawSyncRecord> spec = (root, query, cb) -> cb.equal(root.get("userId"), userId);
+
+        if (type != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("type"), type));
+        }
+        if (from != null) {
+            spec = spec.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("receivedAt"), from));
+        }
+        if (to != null) {
+            spec = spec.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("receivedAt"), to));
+        }
+
+        var pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "receivedAt"));
+        return repo.findAll(spec, pageable);
     }
 }
