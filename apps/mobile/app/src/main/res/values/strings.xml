@@ -10,4 +10,13 @@
     <string name="permissions_required">Se necesitan permisos de Health Connect</string>
     <string name="grant_permissions">Otorgar permisos</string>
     <string name="google_web_client_id">428073873838-23k9egkgpsekn0blbs78jom8n0e1odk8.apps.googleusercontent.com</string>
+    <string name="auto_sync_settings">⚙ Sincronización automática</string>
+    <string name="auto_sync_enable">Activar sincronización automática</string>
+    <string name="auto_sync_frequency">Frecuencia</string>
+    <string name="auto_sync_every_1h">Cada 1 hora</string>
+    <string name="auto_sync_every_6h">Cada 6 horas</string>
+    <string name="auto_sync_every_12h">Cada 12 horas</string>
+    <string name="auto_sync_every_24h">Cada 24 horas</string>
+    <string name="save">Guardar</string>
+    <string name="cancel">Cancelar</string>
 </resources>

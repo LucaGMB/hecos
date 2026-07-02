@@ -15,10 +15,12 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.hecos.mobile.data.health.HealthConnectReader
+import com.hecos.mobile.data.local.HecosDatabase
 import com.hecos.mobile.data.repository.SyncService
 import com.hecos.mobile.data.repository.TokenStore
 import com.hecos.mobile.databinding.ActivityHomeBinding
 import com.hecos.mobile.ui.auth.AuthActivity
+import com.hecos.mobile.ui.settings.SyncSettingsDialog
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -54,7 +56,8 @@ class HomeActivity : AppCompatActivity() {
         }
 
         reader = HealthConnectReader(this)
-        syncService = SyncService(reader, tokenStore)
+        val pendingSyncBatchDao = HecosDatabase.getInstance(this).pendingSyncBatchDao()
+        syncService = SyncService(reader, tokenStore, pendingSyncBatchDao)
 
         lifecycleScope.launch {
             binding.tvUserEmail.text = tokenStore.getUserEmail() ?: ""
@@ -63,9 +66,14 @@ class HomeActivity : AppCompatActivity() {
         binding.btnSignOut.setOnClickListener { signOut() }
         binding.btnGrantPermissions.setOnClickListener { requestPermissions() }
         binding.btnSync.setOnClickListener { startSync() }
+        binding.btnSyncSettings.setOnClickListener { showSyncSettings() }
 
         lifecycleScope.launch { checkPermissions() }
         observeSyncProgress()
+    }
+
+    private fun showSyncSettings() {
+        SyncSettingsDialog.show(this, lifecycleScope, tokenStore)
     }
 
     private suspend fun checkPermissions() {
