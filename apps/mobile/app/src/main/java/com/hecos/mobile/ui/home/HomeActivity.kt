@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.hecos.mobile.data.health.HealthConnectReader
+import com.hecos.mobile.data.local.HecosDatabase
 import com.hecos.mobile.data.repository.SyncService
 import com.hecos.mobile.data.repository.TokenStore
 import com.hecos.mobile.databinding.ActivityHomeBinding
@@ -54,7 +55,8 @@ class HomeActivity : AppCompatActivity() {
         }
 
         reader = HealthConnectReader(this)
-        syncService = SyncService(reader, tokenStore)
+        val pendingSyncBatchDao = HecosDatabase.getInstance(this).pendingSyncBatchDao()
+        syncService = SyncService(reader, tokenStore, pendingSyncBatchDao)
 
         lifecycleScope.launch {
             binding.tvUserEmail.text = tokenStore.getUserEmail() ?: ""
